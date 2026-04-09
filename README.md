@@ -326,7 +326,7 @@ Downstream evaluations save their own folders near the checkpoint:
 
 ## Current Results
 
-See [RESULTS.md](RESULTS.md) for the current CIFAR-10 experiment summary. In short, the masked-patch reconstruction baseline is stronger on linear probing and nearest-neighbor retrieval, while the JEPA-style model is closer on a simple latent anomaly-style test and more invariant under several camera-style perturbations. This makes MAE the stronger encoder for the current static CIFAR-10 benchmark, while JEPA remains worth testing in a more realistic temporal anomaly-detection setting.
+See [RESULTS.md](RESULTS.md) for the current CIFAR-10 experiment summary, including the local Mac/MPS run, the Colab Pro GPU sweep, and suggested report figures. In short, the masked-patch reconstruction baseline is stronger on linear probing and nearest-neighbor retrieval, while the JEPA-style model is closer on a simple latent anomaly-style test and more invariant under several camera-style perturbations. This makes MAE the stronger encoder for the current static CIFAR-10 benchmark, while JEPA remains worth testing in a more realistic temporal anomaly-detection setting.
 
 ## Reusing The Encoder
 
