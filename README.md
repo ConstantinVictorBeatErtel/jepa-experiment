@@ -48,7 +48,9 @@ jepa_mini_project/
     train_mae.py
     eval_linear_probe.py
     eval_retrieval.py
+    eval_anomaly.py
     visualize_embeddings.py
+    visual_robotics_test.py
     export_latents.py
     utils.py
   notebooks/
@@ -248,6 +250,24 @@ Helper script:
 python -m src.eval_retrieval --checkpoint runs/<run_name>/checkpoints/best.ckpt --config configs/mac.yaml
 ```
 
+### Anomaly-Style Geometry Check
+
+Compare class-centroid anomaly scores for two frozen encoders:
+
+```bash
+python -m src.eval_anomaly \
+  --checkpoint runs/<jepa_run>/checkpoints/best.ckpt --name JEPA \
+  --checkpoint runs/<mae_run>/checkpoints/best.ckpt --name MAE \
+  --config configs/mac.yaml
+```
+
+By default this reproduces the lightweight test/test geometry check used in the
+current report. For a stricter split, add:
+
+```bash
+--fit-split train --eval-split test
+```
+
 ### Embedding Visualization
 
 Single model:
@@ -263,6 +283,19 @@ python -m src.visualize_embeddings \
   --checkpoint runs/<jepa_run>/checkpoints/best.ckpt \
   --checkpoint runs/<mae_run>/checkpoints/best.ckpt \
   --config configs/mac.yaml
+```
+
+### Robotics-Style Visual Sanity Test
+
+This compares nearest neighbors and simple camera perturbations such as
+occlusion, noise, darkening, blur, and small rotation:
+
+```bash
+python -m src.visual_robotics_test \
+  --jepa-checkpoint runs/<jepa_run>/checkpoints/best.ckpt \
+  --mae-checkpoint runs/<mae_run>/checkpoints/best.ckpt \
+  --config configs/mac.yaml \
+  --output-dir runs/visual_robotics_test
 ```
 
 ### Latent Export
@@ -290,6 +323,10 @@ Downstream evaluations save their own folders near the checkpoint:
 - `retrieval/`
 - `embedding_viz/`
 - `latents/`
+
+## Current Results
+
+See [RESULTS.md](RESULTS.md) for the current CIFAR-10 experiment summary. In short, the masked-patch reconstruction baseline is stronger on linear probing and nearest-neighbor retrieval, while the JEPA-style model is closer on a simple latent anomaly-style test and more invariant under several camera-style perturbations. This makes MAE the stronger encoder for the current static CIFAR-10 benchmark, while JEPA remains worth testing in a more realistic temporal anomaly-detection setting.
 
 ## Reusing The Encoder
 
