@@ -20,7 +20,7 @@ from torchvision.transforms import functional as TF
 
 from src.data import build_dataloader, build_datasets
 from src.models import get_encoder
-from src.utils import detect_device, ensure_dir, extract_embeddings, prepare_config, set_seed
+from src.utils import detect_device, ensure_dir, prepare_config, set_seed
 
 
 def parse_args() -> argparse.Namespace:
@@ -146,19 +146,18 @@ def plot_perturbation_scores(rows: List[Dict[str, float]], path: Path) -> None:
     plt.close()
 
 
-def nearest_neighbors(
+def nearest_neighbors_from_images(
     encoder: torch.nn.Module,
-    dataloader,
+    images: torch.Tensor,
     device: str,
     query_indices: List[int],
-) -> Tuple[Dict[int, int], Dict[str, torch.Tensor]]:
-    """Compute nearest neighbor indices for selected query positions."""
-    bundle = extract_embeddings(encoder, dataloader, device)
-    embeddings = F.normalize(bundle["embeddings"].float(), dim=1)
+) -> Dict[int, int]:
+    """Compute nearest neighbors inside the same image pool used for plotting."""
+    embeddings = encode(encoder, images, device)
     similarity = embeddings @ embeddings.T
     similarity.fill_diagonal_(-1e9)
     nn_positions = similarity.argmax(dim=1)
-    return {idx: nn_positions[idx].item() for idx in query_indices}, bundle
+    return {idx: nn_positions[idx].item() for idx in query_indices}
 
 
 def plot_neighbor_grid(
@@ -230,16 +229,9 @@ def main() -> None:
     plot_perturbation_scores(rows, output_dir / "perturbation_stability.png")
     plot_perturbation_grid(images, labels, output_dir / "perturbation_examples.png")
 
-    datasets = build_datasets(config)
-    dataloader = build_dataloader(
-        datasets.test,
-        batch_size=int(config["evaluation"]["batch_size"]),
-        shuffle=False,
-        num_workers=int(config["evaluation"]["num_workers"]),
-    )
     query_indices = list(range(min(args.num_examples, args.num_images)))
-    jepa_neighbors, _ = nearest_neighbors(jepa_encoder, dataloader, device, query_indices)
-    mae_neighbors, _ = nearest_neighbors(mae_encoder, dataloader, device, query_indices)
+    jepa_neighbors = nearest_neighbors_from_images(jepa_encoder, images, device, query_indices)
+    mae_neighbors = nearest_neighbors_from_images(mae_encoder, images, device, query_indices)
     plot_neighbor_grid(
         images,
         labels,
@@ -254,4 +246,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
