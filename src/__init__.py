@@ -1,0 +1,2 @@
+"""JEPA mini-project package."""
+

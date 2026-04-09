@@ -1,0 +1,51 @@
+project_name: jepa_mini_project
+seed: 42
+device: auto
+
+paths:
+  data_dir: data
+  runs_dir: runs
+
+dataset:
+  name: cifar10
+  image_size: 32
+  val_split: 5000
+  channels: 3
+
+model:
+  patch_size: 4
+  embed_dim: 128
+  depth: 4
+  num_heads: 4
+  mlp_ratio: 4.0
+  dropout: 0.0
+  mask_ratio: 0.6
+  predictor_hidden_dim: 256
+  decoder_hidden_dim: 256
+  target_encoder_mode: shared
+  ema_momentum: 0.996
+
+training:
+  epochs: 40
+  batch_size: 256
+  num_workers: 2
+  lr: 0.0005
+  weight_decay: 0.0001
+  warmup_epochs: 5
+  grad_clip: 1.0
+  mixed_precision: true
+  latent_loss: cosine
+
+evaluation:
+  batch_size: 256
+  num_workers: 2
+  linear_probe_epochs: 40
+  linear_probe_batch_size: 512
+  linear_probe_lr: 0.002
+  linear_probe_weight_decay: 0.0001
+  retrieval_k: 5
+  visualization_max_points: 2500
+
+logging:
+  run_name: colab
+
