@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+from sklearn.preprocessing import StandardScaler
 
 from src.data import build_dataloader, build_datasets
 from src.models import get_encoder
@@ -52,6 +53,15 @@ def subsample(embeddings: np.ndarray, labels: np.ndarray, max_points: int, seed:
     rng = np.random.default_rng(seed)
     chosen = rng.choice(len(embeddings), size=max_points, replace=False)
     return embeddings[chosen], labels[chosen]
+
+
+def prepare_embeddings_for_viz(embeddings: np.ndarray) -> np.ndarray:
+    """Clean and standardize embeddings before PCA/t-SNE visualization."""
+    embeddings = np.asarray(embeddings, dtype=np.float32)
+    embeddings = np.nan_to_num(embeddings, nan=0.0, posinf=0.0, neginf=0.0)
+    embeddings = StandardScaler().fit_transform(embeddings)
+    embeddings = np.nan_to_num(embeddings, nan=0.0, posinf=0.0, neginf=0.0)
+    return embeddings.astype(np.float32)
 
 
 def main() -> None:
@@ -97,11 +107,12 @@ def main() -> None:
             max_points=int(config["evaluation"]["visualization_max_points"]),
             seed=int(config["seed"]),
         )
+        embeddings = prepare_embeddings_for_viz(embeddings)
 
-        pca_projection = PCA(n_components=2).fit_transform(embeddings)
+        pca_projection = PCA(n_components=2, svd_solver="full").fit_transform(embeddings)
         tsne_projection = TSNE(
             n_components=2,
-            init="pca",
+            init="random",
             learning_rate="auto",
             perplexity=min(30, max(5, len(embeddings) // 20)),
             random_state=int(config["seed"]),
@@ -145,4 +156,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
