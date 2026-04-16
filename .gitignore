@@ -12,3 +12,8 @@ venv/
 data/
 runs/
 
+results/.DS_Store
+results/banks/
+results/*_best.pt
+results/*_final.pt
+results/*.log

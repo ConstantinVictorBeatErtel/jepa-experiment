@@ -1,0 +1,3 @@
+Linear Probe Results
+JEPA target encoder top-1 accuracy: 71.08%
+MAE encoder top-1 accuracy: 56.29%

@@ -1,0 +1,5 @@
+k-NN Retrieval Results
+JEPA target encoder acc@1: 66.15%
+JEPA target encoder acc@5: 89.13%
+MAE encoder acc@1: 50.59%
+MAE encoder acc@5: 83.59%

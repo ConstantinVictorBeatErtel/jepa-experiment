@@ -1,0 +1,10 @@
+Experiment Summary
+JEPA linear probe accuracy: 71.08%
+MAE linear probe accuracy: 56.29%
+JEPA k-NN acc@1: 66.15%
+JEPA k-NN acc@5: 89.13%
+MAE k-NN acc@1: 50.59%
+MAE k-NN acc@5: 83.59%
+Average JEPA semantic retrieval score over 20 visualization queries: 0.502
+
+Across the nearest-neighbor visualizations, the JEPA predictor tends to retrieve training images that align more strongly with the query image class and object-level content, while the MAE encoder more often emphasizes local texture and color statistics. The true JEPA target features generally form the cleanest semantic neighborhood, and the predictor sits closer to that behavior than the MAE baseline, supporting the paper's claim that latent prediction encourages semantic abstraction over direct pixel matching.
